@@ -7,7 +7,7 @@ for the MacroChain AI system.
 
 import os
 from typing import Dict, Any
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):

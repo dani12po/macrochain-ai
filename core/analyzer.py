@@ -10,6 +10,8 @@ import logging
 from .macro import MacroAnalyzer
 from .sentiment import SentimentAnalyzer
 from .onchain import OnChainAnalyzer
+from .market_structure import MarketStructureAnalyzer
+from .research_pipeline import ResearchPipeline
 
 
 logger = logging.getLogger(__name__)
@@ -29,10 +31,12 @@ class MacroChainAnalyzer:
         self.macro_analyzer = MacroAnalyzer()
         self.sentiment_analyzer = SentimentAnalyzer()
         self.onchain_analyzer = OnChainAnalyzer()
+        self.market_structure_analyzer = MarketStructureAnalyzer()
+        self.research_pipeline = ResearchPipeline()
         
     def analyze(self, query: str, assets: List[str] = None) -> Dict[str, Any]:
         """
-        Perform comprehensive market analysis based on user query.
+        Perform comprehensive market analysis using the research pipeline.
         
         Args:
             query: User's analysis request
@@ -42,7 +46,37 @@ class MacroChainAnalyzer:
             Dictionary containing structured analysis results
         """
         try:
-            logger.info(f"Starting analysis for query: {query}")
+            logger.info(f"Starting comprehensive analysis for query: {query}")
+            
+            # Use the research pipeline for comprehensive analysis
+            pipeline_result = self.research_pipeline.execute_research(query, assets)
+            
+            if pipeline_result.get("error"):
+                return self._error_response(pipeline_result.get("message", "Pipeline failed"))
+            
+            # Format results for backward compatibility
+            formatted_result = self._format_pipeline_results(pipeline_result)
+            
+            logger.info("Comprehensive analysis completed successfully")
+            return formatted_result
+            
+        except Exception as e:
+            logger.error(f"Error during analysis: {str(e)}")
+            return self._error_response(str(e))
+    
+    def analyze_legacy(self, query: str, assets: List[str] = None) -> Dict[str, Any]:
+        """
+        Legacy analysis method for backward compatibility.
+        
+        Args:
+            query: User's analysis request
+            assets: List of assets to focus on (optional)
+            
+        Returns:
+            Dictionary containing structured analysis results
+        """
+        try:
+            logger.info(f"Starting legacy analysis for query: {query}")
             
             # Default to major cryptocurrencies if no assets specified
             if not assets:
@@ -52,21 +86,23 @@ class MacroChainAnalyzer:
             macro_analysis = self.macro_analyzer.analyze(query, assets)
             sentiment_analysis = self.sentiment_analyzer.analyze(query, assets)
             onchain_analysis = self.onchain_analyzer.analyze(query, assets)
+            structure_analysis = self.market_structure_analyzer.analyze(query, assets)
             
             # Combine insights
             combined_analysis = self._combine_analyses(
                 macro_analysis,
                 sentiment_analysis, 
                 onchain_analysis,
+                structure_analysis,
                 query,
                 assets
             )
             
-            logger.info("Analysis completed successfully")
+            logger.info("Legacy analysis completed successfully")
             return combined_analysis
             
         except Exception as e:
-            logger.error(f"Error during analysis: {str(e)}")
+            logger.error(f"Error during legacy analysis: {str(e)}")
             return self._error_response(str(e))
     
     def _combine_analyses(
@@ -74,6 +110,7 @@ class MacroChainAnalyzer:
         macro: Dict[str, Any],
         sentiment: Dict[str, Any],
         onchain: Dict[str, Any],
+        structure: Dict[str, Any],
         query: str,
         assets: List[str]
     ) -> Dict[str, Any]:
@@ -84,6 +121,7 @@ class MacroChainAnalyzer:
             macro: Macroeconomic analysis results
             sentiment: Sentiment analysis results
             onchain: On-chain analysis results
+            structure: Market structure analysis results
             query: Original user query
             assets: Assets analyzed
             
@@ -94,14 +132,15 @@ class MacroChainAnalyzer:
         macro_insights = macro.get("insights", [])
         sentiment_insights = sentiment.get("insights", [])
         onchain_insights = onchain.get("insights", [])
+        structure_insights = structure.get("insights", [])
         
         # Identify themes and correlations
-        themes = self._identify_themes(macro, sentiment, onchain)
-        correlations = self._find_correlations(macro, sentiment, onchain)
+        themes = self._identify_themes(macro, sentiment, onchain, structure)
+        correlations = self._find_correlations(macro, sentiment, onchain, structure)
         
         # Assess overall market conditions
         market_conditions = self._assess_market_conditions(
-            macro, sentiment, onchain
+            macro, sentiment, onchain, structure
         )
         
         # Generate educational summary
@@ -117,10 +156,11 @@ class MacroChainAnalyzer:
             "macro_analysis": macro,
             "sentiment_analysis": sentiment,
             "onchain_analysis": onchain,
+            "market_structure_analysis": structure,
             "key_themes": themes,
             "correlations": correlations,
             "educational_summary": educational_summary,
-            "risk_factors": self._identify_risk_factors(macro, sentiment, onchain),
+            "risk_factors": self._identify_risk_factors(macro, sentiment, onchain, structure),
             "disclaimer": self._get_disclaimer()
         }
     
@@ -128,7 +168,8 @@ class MacroChainAnalyzer:
         self, 
         macro: Dict[str, Any],
         sentiment: Dict[str, Any], 
-        onchain: Dict[str, Any]
+        onchain: Dict[str, Any],
+        structure: Dict[str, Any]
     ) -> List[str]:
         """
         Identify recurring themes across different analyses.
@@ -137,6 +178,7 @@ class MacroChainAnalyzer:
             macro: Macroeconomic analysis
             sentiment: Sentiment analysis
             onchain: On-chain analysis
+            structure: Market structure analysis
             
         Returns:
             List of identified themes
@@ -145,7 +187,8 @@ class MacroChainAnalyzer:
         
         # Check for liquidity themes
         if (macro.get("liquidity_tightening") or 
-            onchain.get("reduced_activity")):
+            onchain.get("reduced_activity") or
+            structure.get("liquidity_conditions", {}).get("current_condition") == "tight"):
             themes.append("Liquidity conditions affecting market activity")
         
         # Check for sentiment themes
@@ -163,13 +206,21 @@ class MacroChainAnalyzer:
             macro.get("economic_volatility")):
             themes.append("Macroeconomic uncertainty influencing crypto markets")
         
+        # Check for market structure themes
+        structure_phase = structure.get("market_phase", {}).get("current_phase")
+        if structure_phase in ["transition", "uncertain"]:
+            themes.append("Market structure in transition phase")
+        elif structure_phase in ["trend_up", "trend_down"]:
+            themes.append("Defined market structure with directional bias")
+        
         return themes
     
     def _find_correlations(
         self, 
         macro: Dict[str, Any],
         sentiment: Dict[str, Any],
-        onchain: Dict[str, Any]
+        onchain: Dict[str, Any],
+        structure: Dict[str, Any]
     ) -> List[Dict[str, Any]]:
         """
         Find correlations between different analysis types.
@@ -178,6 +229,7 @@ class MacroChainAnalyzer:
             macro: Macroeconomic analysis
             sentiment: Sentiment analysis
             onchain: On-chain analysis
+            structure: Market structure analysis
             
         Returns:
             List of correlation observations
@@ -202,13 +254,35 @@ class MacroChainAnalyzer:
                 "strength": "moderate"
             })
         
+        # Correlate market structure with volatility
+        structure_phase = structure.get("market_phase", {}).get("current_phase")
+        volatility_regime = structure.get("volatility_regime", {}).get("current_regime")
+        
+        if (structure_phase == "transition" and 
+            volatility_regime in ["high", "extreme"]):
+            correlations.append({
+                "type": "structure_volatility",
+                "observation": "Market structure transition coincides with high volatility",
+                "strength": "strong"
+            })
+        
+        # Correlate macro conditions with market structure
+        if (macro.get("overall_conditions", {}).get("overall") == "challenging" and
+            structure.get("market_phase", {}).get("current_phase") == "range"):
+            correlations.append({
+                "type": "macro_structure",
+                "observation": "Challenging macro conditions coincide with range-bound structure",
+                "strength": "moderate"
+            })
+        
         return correlations
     
     def _assess_market_conditions(
         self, 
         macro: Dict[str, Any],
         sentiment: Dict[str, Any],
-        onchain: Dict[str, Any]
+        onchain: Dict[str, Any],
+        structure: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Assess overall market conditions based on all analyses.
@@ -217,6 +291,7 @@ class MacroChainAnalyzer:
             macro: Macroeconomic analysis
             sentiment: Sentiment analysis
             onchain: On-chain analysis
+            structure: Market structure analysis
             
         Returns:
             Market conditions assessment
@@ -245,11 +320,24 @@ class MacroChainAnalyzer:
         elif onchain.get("network_health") == "weakening":
             factors.append("Weakening on-chain fundamentals")
         
+        # Add market structure factors
+        structure_phase = structure.get("market_phase", {}).get("current_phase")
+        if structure_phase in ["trend_up", "trend_down"]:
+            factors.append(f"Defined {structure_phase.replace('_', ' ')} structure")
+        elif structure_phase == "transition":
+            factors.append("Market structure in transition")
+        
+        volatility_regime = structure.get("volatility_regime", {}).get("current_regime")
+        if volatility_regime in ["high", "extreme"]:
+            factors.append("High volatility environment")
+        elif volatility_regime == "low":
+            factors.append("Low volatility environment")
+        
         conditions["key_factors"] = factors
         
         # Set overall state based on balance of factors
-        positive_factors = sum(1 for f in factors if "positive" in f.lower() or "strong" in f.lower() or "supportive" in f.lower())
-        negative_factors = sum(1 for f in factors if "negative" in f.lower() or "weakening" in f.lower() or "constrained" in f.lower())
+        positive_factors = sum(1 for f in factors if "positive" in f.lower() or "strong" in f.lower() or "supportive" in f.lower() or "trend_up" in f.lower())
+        negative_factors = sum(1 for f in factors if "negative" in f.lower() or "weakening" in f.lower() or "constrained" in f.lower() or "trend_down" in f.lower())
         
         if positive_factors > negative_factors:
             conditions["overall_state"] = "positive"
@@ -309,7 +397,8 @@ class MacroChainAnalyzer:
         self, 
         macro: Dict[str, Any],
         sentiment: Dict[str, Any],
-        onchain: Dict[str, Any]
+        onchain: Dict[str, Any],
+        structure: Dict[str, Any]
     ) -> List[str]:
         """
         Identify key risk factors from the analysis.
@@ -318,6 +407,7 @@ class MacroChainAnalyzer:
             macro: Macroeconomic analysis
             sentiment: Sentiment analysis
             onchain: On-chain analysis
+            structure: Market structure analysis
             
         Returns:
             List of risk factors
@@ -336,10 +426,63 @@ class MacroChainAnalyzer:
         if macro.get("liquidity_conditions") == "tight":
             risks.append("Reduced market liquidity")
         
+        # Add market structure risks
+        structure_phase = structure.get("market_phase", {}).get("current_phase")
+        if structure_phase == "transition":
+            risks.append("Market structure transition increases uncertainty")
+        
+        volatility_regime = structure.get("volatility_regime", {}).get("current_regime")
+        if volatility_regime in ["high", "extreme"]:
+            risks.append("High volatility environment increases risk")
+        
+        liquidity_condition = structure.get("liquidity_conditions", {}).get("current_condition")
+        if liquidity_condition in ["tight", "very_tight"]:
+            risks.append("Tight liquidity conditions may increase execution risk")
+        
         # Always include general market risk
         risks.append("General cryptocurrency market volatility")
         
         return risks
+    
+    def _format_pipeline_results(self, pipeline_result: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Format pipeline results for backward compatibility.
+        
+        Args:
+            pipeline_result: Results from research pipeline
+            
+        Returns:
+            Formatted results compatible with existing API
+        """
+        research_findings = pipeline_result.get("research_findings", {})
+        phase_results = pipeline_result.get("phase_results", {})
+        
+        # Extract individual phase results
+        macro_analysis = phase_results.get("macro", {})
+        sentiment_analysis = phase_results.get("sentiment", {})
+        onchain_analysis = phase_results.get("onchain", {})
+        structure_analysis = phase_results.get("market_structure", {})
+        
+        return {
+            "query": pipeline_result["research_metadata"]["query"],
+            "assets_analyzed": pipeline_result["research_metadata"]["assets_analyzed"],
+            "timestamp": pipeline_result["research_metadata"]["timestamp"],
+            "market_conditions": {
+                "overall_state": research_findings.get("overall_market_state", {}).get("overall_state", "neutral"),
+                "key_factors": research_findings.get("overall_market_state", {}).get("dominant_factors", []),
+                "confidence_level": research_findings.get("confidence_level", "moderate")
+            },
+            "macro_analysis": macro_analysis,
+            "sentiment_analysis": sentiment_analysis,
+            "onchain_analysis": onchain_analysis,
+            "market_structure_analysis": structure_analysis,
+            "key_themes": [corr.get("observation", "") for corr in research_findings.get("cross_phase_correlations", [])],
+            "correlations": research_findings.get("cross_phase_correlations", []),
+            "educational_summary": f"Comprehensive research analysis completed with {research_findings.get('total_insights', 0)} insights identified.",
+            "risk_factors": pipeline_result.get("limitations", []),
+            "research_quality": research_findings.get("research_quality", {}),
+            "disclaimer": pipeline_result.get("disclaimer", self._get_disclaimer())
+        }
     
     def _get_timestamp(self) -> str:
         """Get current timestamp for analysis."""

@@ -6,7 +6,9 @@ and utility functions for the MacroChain AI system.
 """
 
 from .response_formatter import ResponseFormatter
+from .research_formatter import ResearchFormatter
 
 __all__ = [
-    "ResponseFormatter"
+    "ResponseFormatter",
+    "ResearchFormatter"
 ]

@@ -16,7 +16,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.analyzer import MacroChainAnalyzer
-from services.response_formatter import ResponseFormatter
+from services.research_formatter import ResearchFormatter
 from config.settings import get_api_config
 
 
@@ -37,7 +37,7 @@ app = FastAPI(
 
 # Initialize components
 analyzer = MacroChainAnalyzer()
-formatter = ResponseFormatter()
+research_formatter = ResearchFormatter()
 
 
 # Pydantic models for request/response
@@ -151,7 +151,7 @@ async def analyze_market(request: AnalysisRequest):
         else:
             assets = None
         
-        # Perform analysis
+        # Perform comprehensive analysis using research pipeline
         analysis_result = analyzer.analyze(request.query, assets)
         
         # Check for analysis errors
@@ -161,13 +161,16 @@ async def analyze_market(request: AnalysisRequest):
                 detail=f"Analysis failed: {analysis_result.get('message', 'Unknown error')}"
             )
         
-        # Format response
-        formatted_response = formatter.format_analysis_response(
+        # Format professional research report
+        research_report = research_formatter.format_research_report(
             analysis_result, 
             request.query
         )
         
-        logger.info("Analysis completed successfully")
+        # Convert to legacy response format for API compatibility
+        formatted_response = _convert_to_api_response(research_report, request.query)
+        
+        logger.info("Research analysis completed successfully")
         return formatted_response
         
     except HTTPException:
@@ -194,11 +197,14 @@ async def get_info():
             "description": "AI-powered cryptocurrency market analysis agent",
             "purpose": "Educational market analysis without financial advice",
             "capabilities": [
-                "Macroeconomic analysis",
-                "Market sentiment analysis", 
-                "On-chain metrics analysis",
-                "Educational insights",
-                "Risk factor identification"
+                "Deep research pipeline with deterministic methodology",
+                "Macroeconomic analysis with liquidity and policy context",
+                "Market sentiment assessment with volatility and momentum",
+                "On-chain dynamics analysis with network fundamentals",
+                "Market structure analysis with trading context",
+                "Cross-phase correlation and synthesis",
+                "Professional research report generation",
+                "Risk assessment and uncertainty quantification"
             ],
             "supported_assets": [
                 "bitcoin",
@@ -212,15 +218,19 @@ async def get_info():
                 "combined"
             ],
             "limitations": [
-                "Educational purposes only",
-                "No financial advice provided",
-                "No price predictions",
-                "No trading signals",
-                "Conceptual analysis framework"
+                "Educational purposes only - no financial advice",
+                "No price predictions or trading signals",
+                "Conceptual analysis framework, not real-time data",
+                "Research-grade methodology with documented limitations",
+                "Market complexity exceeds analytical frameworks",
+                "Unforeseen events can invalidate current analysis"
             ],
             "disclaimer": (
-                "This tool is for educational purposes only and does not constitute "
-                "financial advice. Cryptocurrency markets are highly volatile and risky."
+                "MacroChain AI provides research-grade cryptocurrency market analysis "
+                "for educational purposes only. It does not provide financial advice, "
+                "trading signals, or price predictions. Cryptocurrency markets are "
+                "highly volatile and risky. Always conduct your own research and "
+                "consult with qualified financial professionals."
             ),
             "version": api_config["version"],
             "endpoints": {
@@ -238,6 +248,44 @@ async def get_info():
         )
 
 
+def _convert_to_api_response(research_report: Dict[str, Any], query: str) -> Dict[str, Any]:
+    """
+    Convert research report to API response format.
+    
+    Args:
+        research_report: Professional research report
+        query: Original user query
+        
+    Returns:
+        API-compatible response
+    """
+    return {
+        "query": query,
+        "timestamp": research_report["report_header"]["publication_date"],
+        "summary": f"{research_report['report_header']['title']} - {research_report['research_focus']['research_objective']}",
+        "market_conditions": {
+            "overall_state": "neutral",  # Extract from research data if available
+            "key_factors": [],
+            "confidence_level": "moderate"
+        },
+        "analysis_sections": {
+            "macroeconomic": research_report.get("macro_context", {}),
+            "sentiment": research_report.get("market_sentiment", {}),
+            "onchain": research_report.get("onchain_overview", {}),
+            "market_structure": research_report.get("market_structure", {})
+        },
+        "key_insights": [
+            insight["insight"] for insight in research_report.get("key_insights", {}).get("insights", [])
+        ],
+        "risk_factors": [
+            risk["risk"] for risk in research_report.get("risks_uncertainty", {}).get("risk_factors", [])
+        ],
+        "educational_context": "\n".join(research_report.get("research_focus", {}).get("methodology", [])),
+        "disclaimer": research_report.get("disclaimer", ""),
+        "metadata": research_report.get("report_metadata", {})
+    }
+
+
 @app.exception_handler(404)
 async def not_found_handler(request, exc):
     """Handle 404 errors."""
@@ -245,7 +293,7 @@ async def not_found_handler(request, exc):
         "error": "Endpoint not found",
         "message": f"The requested endpoint {request.url.path} does not exist",
         "available_endpoints": ["/", "/health", "/analyze", "/info", "/docs"],
-        "timestamp": formatter._get_timestamp()
+        "timestamp": research_formatter._get_timestamp()
     }
 
 
@@ -256,7 +304,7 @@ async def validation_error_handler(request, exc):
         "error": "Validation error",
         "message": "Request validation failed. Please check your input parameters.",
         "details": str(exc),
-        "timestamp": formatter._get_timestamp()
+        "timestamp": research_formatter._get_timestamp()
     }
 
 
@@ -267,7 +315,7 @@ async def internal_error_handler(request, exc):
     return {
         "error": "Internal server error",
         "message": "An unexpected error occurred while processing your request.",
-        "timestamp": formatter._get_timestamp()
+        "timestamp": research_formatter._get_timestamp()
     }
 
 
