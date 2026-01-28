@@ -4,13 +4,13 @@
 
 MacroChain AI is an advanced AI-powered crypto market research system that provides comprehensive, educational analysis of cryptocurrency markets through a structured research pipeline. The system combines macroeconomic analysis, market sentiment assessment, on-chain dynamics, and market structure analysis to deliver professional research reports.
 
-## 🎯 Mission
+## Project Overview
 
-**To provide research-grade cryptocurrency market analysis that enhances understanding of market dynamics without providing financial advice, trading signals, or price predictions.**
+MacroChain AI is a research-grade cryptocurrency market analysis system designed to provide educational insights into market dynamics without offering financial advice or trading signals. The system employs a deterministic, structured research methodology to analyze crypto markets across multiple dimensions.
 
----
+**Educational Purpose Only**: This system is designed exclusively for educational and informational purposes. It does not provide investment advice, trading recommendations, or price predictions.
 
-## 🚀 Advanced Features
+## Key Capabilities
 
 ### Deep Research Pipeline
 - **Deterministic Methodology**: Structured research process with repeatable results
@@ -18,51 +18,161 @@ MacroChain AI is an advanced AI-powered crypto market research system that provi
 - **Cross-Phase Correlation**: Identifies relationships between different market factors
 - **Professional Synthesis**: Combines insights into unified research findings
 
-### Analytical Dimensions
+### Market Structure Analysis
+- **Market Phase Classification**: Trend, range, transition, and uncertainty phases
+- **Volatility Regime Assessment**: Low, medium, high, and extreme volatility conditions
+- **Liquidity and Risk Context**: Trading-relevant structural analysis without execution signals
+- **Structural Strengths/Weaknesses**: Systematic evaluation of market conditions
 
-#### 1. Macroeconomic Analysis
+### Competition Readiness
+- **Recall Network Compatible**: Designed for decentralized AI agent deployment
+- **Professional Research Standards**: Competition-grade analytical rigor
+- **Deterministic Execution**: Repeatable and consistent methodology
+- **Platform Agnostic**: Compatible with various deployment environments
+
+## Research Methodology
+
+### 1. Macro Environment Analysis
 - Global liquidity conditions assessment
 - Interest rates and monetary policy context
 - Risk-on / risk-off market regimes
 - Economic narratives impacting crypto markets
 - Regulatory environment analysis
 
-#### 2. Market Sentiment Assessment
+### 2. Market Sentiment Assessment
 - Investor positioning and psychology evaluation
 - Volatility conditions and regime analysis
 - Momentum and behavioral signals
 - Narrative-driven sentiment shifts
 - Contrarian indicator analysis
 
-#### 3. On-Chain Dynamics
+### 3. On-Chain Dynamics (Conceptual)
 - Network activity trends and fundamentals
 - Capital flow behavior analysis
 - Participation and usage indicators
 - Structural on-chain signals
 - Network health and development metrics
 
-#### 4. Market Structure Analysis
-- Market phase classification (trend, range, transition, uncertainty)
-- Volatility regime assessment (low, medium, high, extreme)
-- Liquidity and risk condition evaluation
-- Structural strengths and weaknesses
+### 4. Market Structure & Risk Context
+- Market phase classification and transition analysis
+- Volatility regime assessment and implications
+- Liquidity condition evaluation and execution context
+- Structural strengths and weaknesses identification
 - Trading context without execution signals
 
-### Professional Research Output
-- **Competition-Grade Reports**: Professional research report format
-- **Risk Assessment**: Systematic evaluation of risks and uncertainties
-- **Educational Focus**: Learning-oriented explanations and insights
-- **Transparent Methodology**: Clear documentation of assumptions and limitations
+### Cross-Phase Correlation and Synthesis
+- Relationship identification between analytical dimensions
+- Confidence assessment and uncertainty quantification
+- Risk factor evaluation across multiple frameworks
+- Educational synthesis of complex market dynamics
 
----
+## What MacroChain DOES NOT Do
 
-## ⚠️ Important Disclaimer
+**Strictly Prohibited Functions:**
+- **No Financial Advice**: Does not provide investment recommendations or guidance
+- **No Buy/Sell Signals**: Does not suggest timing for market entry or exit
+- **No Price Predictions**: Does not forecast future price movements or targets
+- **No Profit Optimization**: Does not optimize for returns or competition ranking
+- **No Trade Execution**: Does not provide actionable trading instructions
+- **No Real-Time Data**: Uses conceptual frameworks, not live market data
 
-**This tool is for EDUCATIONAL AND INFORMATIONAL PURPOSES ONLY. It does NOT provide financial advice, investment recommendations, trading signals, or price predictions. Cryptocurrency markets are HIGHLY VOLATILE AND RISKY. Always conduct your own research and consult with qualified financial professionals before making any investment decisions.**
+## API Usage
 
----
+### Running the Research API
 
-## 🛠 Installation
+Start the FastAPI server:
+
+```bash
+python -m api.app
+```
+
+The server will run on `http://localhost:8000`
+
+### Making Research Requests
+
+Send a POST request to the `/analyze` endpoint:
+
+```bash
+curl -X POST "http://localhost:8000/analyze" \
+     -H "Content-Type: application/json" \
+     -d '{"query": "Analyze Bitcoin market structure and risk context"}'
+```
+
+### Example Request
+
+```python
+import requests
+
+response = requests.post(
+    "http://localhost:8000/analyze",
+    json={"query": "Research current cryptocurrency market dynamics"}
+)
+research_report = response.json()
+```
+
+### Educational Output Disclaimer
+
+All responses include explicit educational disclaimers and risk warnings. The system maintains consistent boundaries between educational analysis and financial advice.
+
+## Architecture
+
+```
+macrochain-ai/
+├── core/                    # Core analysis modules
+│   ├── research_pipeline.py # Structured research pipeline
+│   ├── analyzer.py         # Main analysis orchestrator
+│   ├── macro.py           # Macroeconomic analysis
+│   ├── sentiment.py       # Market sentiment analysis
+│   ├── onchain.py        # On-chain dynamics analysis
+│   └── market_structure.py # Market structure analysis
+├── services/              # Response formatting and utilities
+│   ├── research_formatter.py # Professional research reports
+│   └── response_formatter.py # Legacy response formatting
+├── api/                   # FastAPI web interface
+├── config/               # Configuration settings
+├── prompts/              # Research-grade system prompts
+└── examples/             # Sample queries and usage examples
+```
+
+## Integration
+
+### Platform Compatibility
+
+- **Recall Network**: Optimized for decentralized AI agent deployment
+- **Custom LLM Providers**: Compatible with various language model platforms
+- **Web Applications**: Comprehensive REST API integration
+- **Research Platforms**: Educational analysis module integration
+- **Educational Tools**: Market dynamics education applications
+
+### API Endpoints
+
+- `POST /analyze` - Execute comprehensive market analysis
+- `GET /health` - Check system health and status
+- `GET /info` - Get system information and capabilities
+- `GET /docs` - Interactive API documentation
+
+## Disclaimers & Risk Notes
+
+### Educational Disclaimer
+
+**This tool is for EDUCATIONAL AND INFORMATIONAL PURPOSES ONLY. It does NOT provide financial advice, investment recommendations, trading signals, or price predictions.**
+
+### Risk Warnings
+
+- **High Volatility**: Cryptocurrency markets are extremely volatile and risky
+- **Potential Loss**: You may lose ALL of your invested capital
+- **No Guarantees**: Past performance does not indicate future results
+- **Market Uncertainty**: Markets are inherently unpredictable
+- **Professional Consultation**: Always consult qualified financial professionals
+
+### Methodology Limitations
+
+- **Conceptual Frameworks**: Uses educational models, not real-time data
+- **Analytical Boundaries**: Limited to educational market analysis
+- **Uncertainty Acknowledgment**: All analysis includes confidence assessment
+- **Risk Communication**: Systematic evaluation of limitations and uncertainties
+
+## Installation
 
 ### Prerequisites
 - Python 3.8 or higher
@@ -87,162 +197,7 @@ pip install -r requirements.txt
 # No API keys are required for basic functionality
 ```
 
----
-
-## 🚀 Usage
-
-### Running the Research API
-
-Start the FastAPI server:
-
-```bash
-python -m api.app
-```
-
-The server will run on `http://localhost:8000`
-
-### Making Research Requests
-
-Send a POST request to the `/analyze` endpoint:
-
-```bash
-curl -X POST "http://localhost:8000/analyze" \
-     -H "Content-Type: application/json" \
-     -d '{"query": "Analyze Bitcoin market structure and risk context"}'
-```
-
-### Using the Research Pipeline
-
-```python
-from core.analyzer import MacroChainAnalyzer
-from services.research_formatter import ResearchFormatter
-
-# Initialize components
-analyzer = MacroChainAnalyzer()
-formatter = ResearchFormatter()
-
-# Execute research pipeline
-analysis_result = analyzer.analyze("Analyze Ethereum market conditions")
-
-# Generate professional research report
-research_report = formatter.format_research_report(analysis_result, "Analyze Ethereum market conditions")
-print(research_report)
-```
-
-### Using Individual Analysis Modules
-
-```python
-from core.research_pipeline import ResearchPipeline
-
-# Initialize research pipeline
-pipeline = ResearchPipeline()
-
-# Execute comprehensive research
-research_report = pipeline.execute_research("What are current crypto market trends?")
-print(research_report)
-```
-
----
-
-## 🏗 Architecture
-
-### Research Pipeline Architecture
-
-```
-macrochain-ai/
-├── core/                    # Core analysis modules
-│   ├── research_pipeline.py # Structured research pipeline
-│   ├── analyzer.py         # Main analysis orchestrator
-│   ├── macro.py           # Macroeconomic analysis
-│   ├── sentiment.py       # Market sentiment analysis
-│   ├── onchain.py        # On-chain dynamics analysis
-│   └── market_structure.py # Market structure analysis
-├── services/              # Response formatting and utilities
-│   ├── research_formatter.py # Professional research reports
-│   └── response_formatter.py # Legacy response formatting
-├── api/                   # FastAPI web interface
-├── config/               # Configuration settings
-├── prompts/              # Research-grade system prompts
-└── examples/             # Sample queries and usage examples
-```
-
-### Research Process Flow
-
-1. **Query Analysis**: Parse and validate research request
-2. **Pipeline Execution**: Run all analysis phases systematically
-3. **Cross-Phase Correlation**: Identify relationships between dimensions
-4. **Synthesis**: Combine insights into unified findings
-5. **Risk Assessment**: Evaluate limitations and uncertainties
-6. **Report Generation**: Create professional research output
-
----
-
-## 🔧 Integration
-
-### Platform Integration
-
-MacroChain AI is designed for platform-agnostic integration:
-
-- **Recall Network**: For decentralized AI agent deployment
-- **Custom LLM Providers**: Via the prompt-based interface
-- **Web Applications**: Through the comprehensive REST API
-- **Research Platforms**: As an analysis module (educational use only)
-- **Educational Tools**: For market dynamics education
-
-### API Endpoints
-
-- `POST /analyze` - Execute comprehensive market analysis
-- `GET /health` - Check system health and status
-- `GET /info` - Get system information and capabilities
-- `GET /docs` - Interactive API documentation
-
----
-
-## 📊 Research Methodology
-
-### Analytical Framework
-
-MacroChain AI follows a structured research methodology:
-
-1. **Systematic Analysis**: Each dimension analyzed independently
-2. **Deterministic Process**: Repeatable and consistent methodology
-3. **Cross-Validation**: Insights validated across multiple dimensions
-4. **Risk Awareness**: Clear communication of limitations and uncertainties
-5. **Educational Focus**: Emphasis on learning and understanding
-
-### Quality Assurance
-
-- **Confidence Levels**: Each analysis includes confidence assessment
-- **Assumption Documentation**: All assumptions clearly stated
-- **Limitation Awareness**: Methodological limitations explicitly documented
-- **Professional Standards**: Research-grade analytical rigor
-- **Neutrality Maintenance**: Balanced and objective perspectives
-
----
-
-## 🎓 Educational Value
-
-### Learning Objectives
-
-MacroChain AI helps users understand:
-
-- **Market Dynamics**: How different factors interact in crypto markets
-- **Analytical Frameworks**: Structured approaches to market analysis
-- **Risk Assessment**: Systematic evaluation of market risks
-- **Research Methodology**: Professional research processes
-- **Market Structure**: Trading context without execution signals
-
-### Use Cases
-
-- **Market Education**: Learn about cryptocurrency market dynamics
-- **Research Training**: Understand professional market analysis
-- **Risk Awareness**: Develop systematic risk assessment skills
-- **Analytical Thinking**: Build structured analytical frameworks
-- **Market Context**: Gain deeper understanding of market conditions
-
----
-
-## 🤝 Contributing
+## Contributing
 
 ### Development Guidelines
 
@@ -260,15 +215,11 @@ MacroChain AI helps users understand:
 - **Error handling** with proper logging
 - **Educational focus** maintained throughout
 
----
-
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
-## 🆘 Support
+## Support
 
 ### Getting Help
 
@@ -288,25 +239,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Q: Does it use real-time data?**
   A: No, it uses conceptual frameworks for educational analysis.
 
----
-
-## 🔮 Future Development
-
-### Planned Enhancements
-
-- **Advanced Correlation Analysis**: Deeper cross-phase relationship analysis
-- **Historical Pattern Recognition**: Educational pattern analysis
-- **Custom Research Templates**: Specialized analysis frameworks
-- **Integration Frameworks**: Enhanced platform integration options
-- **Educational Modules**: Structured learning pathways
-
-### Research Roadmap
-
-1. **Enhanced Methodology**: Advanced analytical frameworks
-2. **Broader Coverage**: Additional cryptocurrency sectors
-3. **Deeper Insights**: More sophisticated correlation analysis
-4. **Better Education**: Enhanced learning experiences
-5. **Platform Expansion**: Wider integration capabilities
+- **Q: Is it competition-ready?**
+  A: Yes, it's designed for research-grade competition environments with strict educational boundaries.
 
 ---
 
